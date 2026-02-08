@@ -928,26 +928,31 @@ def main():
     key = day_info["key"]
     
     # PLAY BACKGROUND MUSIC
-    # Priority: 1. URL in mapping, 2. Specific local song, 3. Default love song URL, 4. Default local love.mp3
-    music_file = MEDIA_ASSETS.get(f"{key}_song_url")
+    is_locked = current_day < day_info["date"]
     
-    if not music_file or not music_file.startswith("http"):
-        # Check local files for day-specific song
-        music_file = None
-        if current_day >= day_info["date"]:
+    if is_locked:
+        # If locked, play love.mp3 / love_song_url
+        music_file = MEDIA_ASSETS.get("love_song_url")
+        if not music_file or not music_file.startswith("http"):
+            music_file = "love.mp3" if os.path.exists("love.mp3") else None
+    else:
+        # If unlocked, play the original day-specific song
+        music_file = MEDIA_ASSETS.get(f"{key}_song_url")
+        
+        if not music_file or not music_file.startswith("http"):
+            # Check local files for day-specific song
+            music_file = None
             for ext in ["mp3", "ogg", "wav"]:
                 candidate = f"{key}_song.{ext}"
                 if os.path.exists(candidate):
                     music_file = candidate
                     break
                     
-        # Fallback logic
-        if not music_file:
-            # Try global love song URL
-            music_file = MEDIA_ASSETS.get("love_song_url")
-            if not music_file or not music_file.startswith("http"):
-                # Final local fallback
-                music_file = "love.mp3" if os.path.exists("love.mp3") else None
+            # Fallback to general love song only if day-specific original is missing
+            if not music_file:
+                music_file = MEDIA_ASSETS.get("love_song_url")
+                if not music_file or not music_file.startswith("http"):
+                    music_file = "love.mp3" if os.path.exists("love.mp3") else None
     
     if music_file:
         mtime = os.path.getmtime(music_file) if os.path.exists(str(music_file)) else time.time()
