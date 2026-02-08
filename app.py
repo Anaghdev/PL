@@ -411,12 +411,57 @@ def inject_css(theme):
     else:
         theme_css = ".stApp { background: #121212; }"
 
+    # MOBILE SIDEBAR VISIBILITY ENHANCEMENTS
+    sidebar_css = """
+    /* Sidebar Toggle Button Styling */
+    [data-testid="stSidebarCollapsedControl"] {
+        background: rgba(255, 20, 147, 0.2) !important;
+        border-radius: 0 10px 10px 0 !important;
+        padding: 5px 10px !important;
+        width: auto !important;
+        height: auto !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 0 15px rgba(255, 20, 147, 0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    [data-testid="stSidebarCollapsedControl"]:hover {
+        background: rgba(255, 20, 147, 0.4) !important;
+        box-shadow: 0 0 25px rgba(255, 20, 147, 0.6) !important;
+    }
+
+    /* Add "📅 STORY" Text next to the icon */
+    [data-testid="stSidebarCollapsedControl"]::after {
+        content: "📅 STORY";
+        color: white;
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        margin-left: 5px;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    /* Make the button bigger on mobile */
+    @media (max-width: 768px) {
+        [data-testid="stSidebarCollapsedControl"] {
+            top: 10px !important;
+            left: 10px !important;
+            padding: 8px 15px !important;
+        }
+        [data-testid="stSidebarCollapsedControl"] > button {
+            width: 30px !important;
+            height: 30px !important;
+        }
+    }
+    """
+
     full_css = f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;700&family=Dancing+Script:wght@400;700&family=Lato:wght@300;400;700&display=swap');
     {animations}
     {base_style}
     {theme_css}
+    {sidebar_css}
     </style>
     """
     st.markdown(full_css, unsafe_allow_html=True)
