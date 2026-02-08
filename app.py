@@ -125,10 +125,12 @@ def get_audio_html(file_path_or_url, _mtime=None):
         return ""
 
 @st.cache_data
-def get_file_b64(file_path, _mtime=None):
+def get_remote_base64(url):
     try:
-        with open(file_path, "rb") as f:
-            return base64.b64encode(f.read()).decode()
+        content = get_remote_content(url)
+        if content:
+            return base64.b64encode(content).decode()
+        return None
     except:
         return None
 
@@ -659,9 +661,13 @@ def page_teddy():
         """, unsafe_allow_html=True)
 
         if selected_img_url and selected_img_url.startswith("http"):
-            st.image(selected_img_url, caption="Made with love, just for you.", use_container_width=True)
+            b64 = get_remote_base64(selected_img_url)
+            if b64:
+                 st.image(f"data:image/png;base64,{b64}", caption="Made with love, just for you.", use_container_width=True)
+            else:
+                 st.markdown(f"<div style='text-align:center; font-size:100px;'>{st.session_state.bear_color} + {st.session_state.bear_accessory}</div>", unsafe_allow_html=True)
         elif img_key and os.path.exists(img_key):
-            st.image(img_key, caption="Made with love, just for you.", use_container_width=True)
+             st.image(img_key, caption="Made with love, just for you.", use_container_width=True)
         else:
             # Fallback if image missing
             st.markdown(f"""
@@ -825,7 +831,9 @@ def page_valentine():
     # PHOTOS
     p1_url = MEDIA_ASSETS.get("photo1_url")
     if p1_url and p1_url.startswith("http"):
-        st.markdown(f"<div class='glass-card' style='padding:10px;'><img src='{p1_url}' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
+        p1_b64 = get_remote_base64(p1_url)
+        if p1_b64:
+            st.markdown(f"<div class='glass-card' style='padding:10px;'><img src='data:image/jpeg;base64,{p1_b64}' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
     elif os.path.exists("photo1.jpg"):
         st.markdown("<div class='glass-card' style='padding:10px;'><img src='data:image/jpeg;base64,"+get_image_b64("photo1.jpg", os.path.getmtime("photo1.jpg"))+"' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
     
@@ -833,14 +841,18 @@ def page_valentine():
     p2_url = MEDIA_ASSETS.get("photo2_url")
     with col1:
         if p2_url and p2_url.startswith("http"):
-            st.markdown(f"<div class='glass-card' style='padding:10px;'><img src='{p2_url}' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
+            p2_b64 = get_remote_base64(p2_url)
+            if p2_b64:
+                 st.markdown(f"<div class='glass-card' style='padding:10px;'><img src='data:image/jpeg;base64,{p2_b64}' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
         elif os.path.exists("photo2.jpg"):
             st.markdown("<div class='glass-card' style='padding:10px;'><img src='data:image/jpeg;base64,"+get_image_b64("photo2.jpg", os.path.getmtime("photo2.jpg"))+"' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
             
     p3_url = MEDIA_ASSETS.get("photo3_url")
     with col2:
         if p3_url and p3_url.startswith("http"):
-            st.markdown(f"<div class='glass-card' style='padding:10px;'><img src='{p3_url}' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
+            p3_b64 = get_remote_base64(p3_url)
+            if p3_b64:
+                 st.markdown(f"<div class='glass-card' style='padding:10px;'><img src='data:image/jpeg;base64,{p3_b64}' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
         elif os.path.exists("photo3.jpg"):
             st.markdown("<div class='glass-card' style='padding:10px;'><img src='data:image/jpeg;base64,"+get_image_b64("photo3.jpg", os.path.getmtime("photo3.jpg"))+"' style='width:100%; border-radius:10px;'></div>", unsafe_allow_html=True)
         
