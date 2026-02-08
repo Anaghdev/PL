@@ -115,6 +115,7 @@ def get_file_b64(file_path, _mtime=None):
     except:
         return None
 
+def render_voice_note(day_key):
     st.markdown("---")
     st.markdown("### 💌 A Voice Note For You")
     
@@ -127,7 +128,7 @@ def get_file_b64(file_path, _mtime=None):
                 Your browser does not support the audio element.
             </audio>
         """
-        st.markdown(audio_html, unsafe_allow_allow_html=True)
+        st.markdown(audio_html, unsafe_allow_html=True)
         return
 
     # Fallback: Check local files
