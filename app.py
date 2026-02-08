@@ -122,13 +122,7 @@ def render_voice_note(day_key):
     # Priority: URL from MEDIA_ASSETS
     url = MEDIA_ASSETS.get(f"{day_key}_note_url")
     if url and url.startswith("http"):
-        audio_html = f"""
-            <audio controls style="width: 100%; border-radius: 10px;">
-                <source src="{url}">
-                Your browser does not support the audio element.
-            </audio>
-        """
-        st.markdown(audio_html, unsafe_allow_html=True)
+        st.audio(url)
         return
 
     # Fallback: Check local files
