@@ -108,6 +108,16 @@ def get_audio_html(file_path_or_url, _mtime=None):
         return ""
 
 @st.cache_data
+def get_remote_audio_bytes(url):
+    try:
+        r = requests.get(url, allow_redirects=True)
+        if r.status_code == 200:
+            return r.content
+        return None
+    except:
+        return None
+
+@st.cache_data
 def get_file_b64(file_path, _mtime=None):
     try:
         with open(file_path, "rb") as f:
@@ -122,8 +132,10 @@ def render_voice_note(day_key):
     # Priority: URL from MEDIA_ASSETS
     url = MEDIA_ASSETS.get(f"{day_key}_note_url")
     if url and url.startswith("http"):
-        st.audio(url)
-        return
+        audio_bytes = get_remote_audio_bytes(url)
+        if audio_bytes:
+            st.audio(audio_bytes, format="audio/mp3")
+            return
 
     # Fallback: Check local files
     candidates = [
