@@ -899,13 +899,7 @@ def main():
     from datetime import timedelta
     now_ist = datetime.utcnow() + timedelta(hours=5, minutes=30)
     
-    # 🛠️ TEST MODE TOGGLE
-    test_mode = st.sidebar.checkbox("🛠️ Test Mode", key="test_mode")
-    
-    if test_mode:
-        current_day = 14 # Force to Valentine's Day or treat all as unlocked
-    else:
-        current_day = now_ist.day if now_ist.month == 2 else 0 
+    current_day = now_ist.day if now_ist.month == 2 else 0 
         
     days = {
         "🌹 Rose Day": {"date": 7, "func": page_rose, "key": "rose"},
@@ -934,7 +928,7 @@ def main():
     key = day_info["key"]
     
     # PLAY BACKGROUND MUSIC
-    is_locked = current_day < day_info["date"] and not test_mode
+    is_locked = current_day < day_info["date"]
     
     if is_locked:
         # If locked, play love.mp3 / love_song_url
@@ -966,7 +960,7 @@ def main():
 
     # RENDER PAGE
 
-    if current_day >= day_info["date"] or test_mode:
+    if current_day >= day_info["date"]:
         day_info["func"]()
     else:
         page_locked(selection, f"Feb {day_info['date']}")
