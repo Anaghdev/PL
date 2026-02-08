@@ -854,9 +854,12 @@ def main():
     # Developer Controls
     dev_mode = st.sidebar.checkbox("Test Mode (Unlock All)", value=False)
     
-    today = datetime.now().day
-    month = datetime.now().month
-    current_day = today if month == 2 else 0 
+    # TIMEZONE ADJUSTMENT (IST: UTC+5:30)
+    # Streamlit Cloud servers usually run in UTC.
+    from datetime import timedelta
+    now_ist = datetime.utcnow() + timedelta(hours=5, minutes=30)
+    
+    current_day = now_ist.day if now_ist.month == 2 else 0 
     if dev_mode:
         current_day = 14 # Unlock all days for testing
         
