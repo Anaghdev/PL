@@ -63,27 +63,44 @@ MEDIA_ASSETS = {
 
 # ---------------- HELPER FUNCTIONS ----------------
 @st.cache_data
+def get_remote_content(url):
+    try:
+        r = requests.get(url, allow_redirects=True)
+        if r.status_code == 200:
+            return r.content
+        return None
+    except:
+        return None
+
+@st.cache_data
 def get_audio_html(file_path_or_url, _mtime=None):
     try:
-        # Check if it's a URL
+        # Check if it's a URL - Fetch and serve as base64 for reliability
         if file_path_or_url.startswith(("http://", "https://")):
-            audio_source = file_path_or_url
-            # For URLs, we don't need mime_type for the source tag unless we want to be explicit,
-            # but usually the browser handles it from the extension in the URL or the response headers.
-            return f"""
-            <audio id="love-audio" loop>
-                <source src="{audio_source}">
-            </audio>
-            <script>
-                var audio = document.getElementById("love-audio");
-                audio.volume = 0.3; 
-                function playAudio() {{
-                    audio.play().catch(function(e){{ console.log(e); }});
-                }}
-                playAudio();
-                window.parent.document.addEventListener('click', playAudio, {{ once: true }});
-            </script>
-            """
+            content = get_remote_content(file_path_or_url)
+            if content:
+                b64 = base64.b64encode(content).decode()
+                # Default to mp3 if URL doesn't specify
+                ext = "mp3"
+                if ".ogg" in file_path_or_url.lower(): ext = "ogg"
+                elif ".wav" in file_path_or_url.lower(): ext = "wav"
+                mime_type = f"audio/{ext}"
+                
+                return f"""
+                <audio id="love-audio" loop>
+                    <source src="data:{mime_type};base64,{b64}" type="{mime_type}">
+                </audio>
+                <script>
+                    var audio = document.getElementById("love-audio");
+                    audio.volume = 0.3; 
+                    function playAudio() {{
+                        audio.play().catch(function(e){{ console.log(e); }});
+                    }}
+                    playAudio();
+                    window.parent.document.addEventListener('click', playAudio, {{ once: true }});
+                </script>
+                """
+            return ""
         
         # Local file path
         ext = os.path.splitext(file_path_or_url)[1].lower().replace(".", "")
@@ -108,12 +125,10 @@ def get_audio_html(file_path_or_url, _mtime=None):
         return ""
 
 @st.cache_data
-def get_remote_audio_bytes(url):
+def get_file_b64(file_path, _mtime=None):
     try:
-        r = requests.get(url, allow_redirects=True)
-        if r.status_code == 200:
-            return r.content
-        return None
+        with open(file_path, "rb") as f:
+            return base64.b64encode(f.read()).decode()
     except:
         return None
 
@@ -132,7 +147,7 @@ def render_voice_note(day_key):
     # Priority: URL from MEDIA_ASSETS
     url = MEDIA_ASSETS.get(f"{day_key}_note_url")
     if url and url.startswith("http"):
-        audio_bytes = get_remote_audio_bytes(url)
+        audio_bytes = get_remote_content(url)
         if audio_bytes:
             st.audio(audio_bytes, format="audio/mp3")
             return
@@ -544,12 +559,16 @@ def page_propose():
     else:
         st.markdown("<div class='glass-card' style='text-align:center; background:rgba(0,100,0,0.3); border-color:#00ff00;'><h3>SHE SAID YES! 💍💖</h3></div>", unsafe_allow_html=True)
         
-        video_source = MEDIA_ASSETS.get("celebration_video_url")
-        if not video_source or not video_source.startswith("http"):
+        video_url = MEDIA_ASSETS.get("celebration_video_url")
+        if video_url and video_url.startswith("http"):
+             video_bytes = get_remote_content(video_url)
+             if video_bytes:
+                  st.video(video_bytes, autoplay=True)
+        else:
+             # Fallback
              video_source = "celebration.mp4" if os.path.exists("celebration.mp4") else None
-        
-        if video_source:
-            st.video(video_source, autoplay=True)
+             if video_source:
+                  st.video(video_source, autoplay=True)
 
     render_voice_note("propose")
 
