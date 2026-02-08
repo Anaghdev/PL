@@ -1,0 +1,7 @@
+streamlit
+streamlit-lottie
+requests
+pillow
+streamlit-drawable-canvas
+imageio
+imageio-ffmpeg

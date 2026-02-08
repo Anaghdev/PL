@@ -1,0 +1,32 @@
+# Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Streamlit
+.streamlit/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Large Media (Migrated to GDrive)
+*.mp3
+*.ogg
+*.mp4
+*.aac
+*.jpg
+*.png
+
+# Temporary scraping files
+gdrive_folder.html
+gdrive_folder_utf8.html
+extract_ids.py
