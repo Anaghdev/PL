@@ -879,7 +879,7 @@ def main():
     
     # Calculate default index based on current date
     # Rose Day is index 0 (Feb 7). Valentine is index 7 (Feb 14).
-    if month == 2:
+    if now_ist.month == 2:
         if 7 <= current_day <= 14:
             default_index = current_day - 7
         elif current_day > 14:
