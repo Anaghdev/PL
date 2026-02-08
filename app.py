@@ -894,17 +894,12 @@ def main():
     # SIDEBAR
     st.sidebar.markdown("<h2 style='text-align:center; font-family:Great Vibes; color:#ff1493;'>Timeline</h2>", unsafe_allow_html=True)
     
-    # Developer Controls
-    dev_mode = st.sidebar.checkbox("Test Mode (Unlock All)", value=False)
-    
     # TIMEZONE ADJUSTMENT (IST: UTC+5:30)
     # Streamlit Cloud servers usually run in UTC.
     from datetime import timedelta
     now_ist = datetime.utcnow() + timedelta(hours=5, minutes=30)
     
     current_day = now_ist.day if now_ist.month == 2 else 0 
-    if dev_mode:
-        current_day = 14 # Unlock all days for testing
         
     days = {
         "🌹 Rose Day": {"date": 7, "func": page_rose, "key": "rose"},
@@ -958,32 +953,7 @@ def main():
         mtime = os.path.getmtime(music_file) if os.path.exists(str(music_file)) else time.time()
         components.html(get_audio_html(music_file, mtime), height=0)
 
-    # RENDER PAGE - Test Mode UI
-    if dev_mode:
-        st.sidebar.markdown("---")
-        st.sidebar.subheader("🎙️ Upload Your Voice")
-        st.sidebar.info("Upload .mp3/.aac/.m4a to replace the current day's voice note.")
-        
-        uploaded_voice = st.sidebar.file_uploader(f"Voice for {selection}", type=["mp3", "wav", "aac", "m4a"], key=f"uploader_{key}")
-        
-        if uploaded_voice:
-            # Determine extension
-            ext = uploaded_voice.name.split(".")[-1].lower()
-            if ext not in ["mp3", "wav", "aac", "m4a"]: ext = "mp3" 
-            
-            # Save the file
-            target_filename = f"{key}_note.{ext}"
-            with open(target_filename, "wb") as f:
-                f.write(uploaded_voice.getbuffer())
-            st.sidebar.success(f"Saved to {target_filename}!")
-            
-            # Remove conflicting files (optional, but good)
-            for other_ext in ["mp3", "wav", "aac", "m4a"]:
-                if other_ext != ext:
-                    other_name = f"{key}_note.{other_ext}"
-                    if os.path.exists(other_name):
-                        try: os.remove(other_name)
-                        except: pass
+    # RENDER PAGE
 
     if current_day >= day_info["date"]:
         day_info["func"]()
