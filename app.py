@@ -413,44 +413,49 @@ def inject_css(theme):
 
     # MOBILE SIDEBAR VISIBILITY ENHANCEMENTS
     sidebar_css = """
-    /* Sidebar Toggle Button Styling */
+    /* Sidebar Toggle Button - Floating Style */
     [data-testid="stSidebarCollapsedControl"] {
-        background: rgba(255, 20, 147, 0.2) !important;
-        border-radius: 0 10px 10px 0 !important;
-        padding: 5px 10px !important;
-        width: auto !important;
-        height: auto !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 0 15px rgba(255, 20, 147, 0.4) !important;
+        top: 20px !important;
+        left: 20px !important;
+        background: transparent !important;
+    }
+    
+    [data-testid="stSidebarCollapsedControl"] button {
+        background: rgba(255, 20, 147, 0.8) !important;
+        border: 2px solid white !important;
+        box-shadow: 0 0 20px rgba(255, 20, 147, 0.6) !important;
+        border-radius: 15px !important;
+        width: 120px !important;
+        height: 45px !important;
+        color: white !important;
         transition: all 0.3s ease !important;
     }
     
-    [data-testid="stSidebarCollapsedControl"]:hover {
-        background: rgba(255, 20, 147, 0.4) !important;
-        box-shadow: 0 0 25px rgba(255, 20, 147, 0.6) !important;
-    }
-
-    /* Add "📅 STORY" Text next to the icon */
-    [data-testid="stSidebarCollapsedControl"]::after {
+    [data-testid="stSidebarCollapsedControl"] button::before {
         content: "📅 STORY";
-        color: white;
         font-family: 'Cinzel', serif;
         font-size: 14px;
-        margin-left: 5px;
         font-weight: 700;
-        letter-spacing: 1px;
+        margin-right: 5px;
     }
 
-    /* Make the button bigger on mobile */
+    [data-testid="stSidebarCollapsedControl"] button:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 0 30px rgba(255, 20, 147, 0.9) !important;
+        background: rgba(255, 20, 147, 1) !important;
+    }
+
+    /* Hide the default chevron icon if possible or just style it */
+    [data-testid="stSidebarCollapsedControl"] button svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
     @media (max-width: 768px) {
-        [data-testid="stSidebarCollapsedControl"] {
-            top: 10px !important;
-            left: 10px !important;
-            padding: 8px 15px !important;
-        }
-        [data-testid="stSidebarCollapsedControl"] > button {
-            width: 30px !important;
-            height: 30px !important;
+        [data-testid="stSidebarCollapsedControl"] button {
+            width: 110px !important;
+            height: 40px !important;
+            font-size: 12px !important;
         }
     }
     """
